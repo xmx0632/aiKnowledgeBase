@@ -18,7 +18,6 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class DocumentService {
 
     private final DocumentRepository documentRepository;
@@ -42,7 +41,7 @@ public class DocumentService {
         // Process each chunk
         for (int i = 0; i < chunks.size(); i++) {
             String chunkContent = chunks.get(i);
-            
+
             // Create embedding and store in vector database
             float[] embedding = embeddingModel.embed(chunkContent).content().vector();
             String vectorId = vectorService.storeVector(embedding, document.getId(), i);
@@ -62,7 +61,8 @@ public class DocumentService {
 
     private List<String> splitContent(String content) {
         // Simple implementation - split by paragraphs
-        // In a real implementation, you might want to use more sophisticated text splitting
+        // In a real implementation, you might want to use more sophisticated text
+        // splitting
         String[] paragraphs = content.split("\\n\\n");
         List<String> chunks = new ArrayList<>();
         for (String paragraph : paragraphs) {

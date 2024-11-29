@@ -24,7 +24,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Map;
+import java.util.UUID;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -49,6 +55,8 @@ public class VectorService implements InitializingBean {
         for (float v : vector) {
             vectorList.add(v);
         }
+
+        log.info("vectorId={},vectorList={},documentId={},chunkIndex={}", vectorId, vectorList, documentId, chunkIndex);
 
         List<InsertParam.Field> fields = new ArrayList<>();
         fields.add(new InsertParam.Field("vector_id", Collections.singletonList(vectorId)));
@@ -105,34 +113,36 @@ public class VectorService implements InitializingBean {
         List<Map<String, Object>> results = new ArrayList<>();
         SearchResults searchResults = searchResponse.getData();
         SearchResultData resultData = searchResults.getResults();
-        
+
         // 获取字段数据
         List<FieldData> fieldsData = resultData.getFieldsDataList();
-        
+
+        log.info("fieldsData={}", fieldsData);
+
         // 获取分数
         List<Float> scores = new ArrayList<>();
         for (int i = 0; i < resultData.getNumQueries(); i++) {
             scores.add(Float.valueOf(resultData.getScores(i)));
         }
-        
+
         int numResults = scores.size();
         log.info("Found {} results", numResults);
 
         for (int i = 0; i < numResults; i++) {
             Map<String, Object> result = new HashMap<>();
-            
-            // 获取 vector_id (String)
-            // result.put("vector_id", fieldsData.get(0).getValidData(i));
-            
-            // 获取 document_id (Long)
-            // result.put("document_id", fieldsData.get(1).getValidData(i));
-            
+
             // 获取 chunk_index (Int)
-            // result.put("chunk_index", fieldsData.get(2).getValidData(i));
-            
+            result.put("chunk_index", fieldsData.get(0).getScalars().getIntData());
+
+            // 获取 vector_id (String)
+            result.put("vector_id", fieldsData.get(1).getScalars().getStringData());
+
+            // 获取 document_id (Long)
+            result.put("document_id", fieldsData.get(2).getScalars().getLongData());
+
             // 获取相似度分数
             result.put("score", scores.get(i));
-            
+
             results.add(result);
             log.debug("Result {}: vectorId={}, documentId={}, chunkIndex={}, score={}",
                     i, result.get("vector_id"), result.get("document_id"),
