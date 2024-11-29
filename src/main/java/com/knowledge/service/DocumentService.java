@@ -5,6 +5,7 @@ import com.knowledge.domain.DocumentChunk;
 import com.knowledge.repository.DocumentChunkRepository;
 import com.knowledge.repository.DocumentRepository;
 import dev.langchain4j.model.embedding.EmbeddingModel;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 @RequiredArgsConstructor
 public class DocumentService {
 

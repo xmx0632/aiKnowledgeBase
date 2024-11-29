@@ -18,7 +18,7 @@ public class DocumentChunk {
     @JoinColumn(name = "document_id", nullable = false)
     private Document document;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "LONGTEXT", nullable = false)
     private String content;
 
     @Column(name = "chunk_index")
